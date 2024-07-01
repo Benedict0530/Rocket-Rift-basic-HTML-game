@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Animated Background with Buttons and Image</title>
+    <style>
+    html{
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+   overscroll-behavior: none;
+    margin: 0;
+     padding: 0;
+}
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+     #backgroundImage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+
+   @keyframes shake {
+        0%, 100% { transform: translateX(-50%) rotate(0deg); }
+        25%, 75% { transform: translateX(-50%) rotate(-5deg); }
+        50% { transform: translateX(-50%) rotate(5deg); }
+    }
+
+    #rocketImage {
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: auto;
+        max-width: 500px; /* Adjust the maximum width as needed */
+        z-index: 2;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        animation: shake 0.3s ease-in-out infinite; /* Adjust the duration and easing as needed */
+    }
+
+
+
+        button {
+            padding: 0;
+            width: 30vw; /* 15% of the viewport width */
+            height: 30vw; /* 15% of the viewport width */
+            border-radius: 50%;
+            font-size: 2vw; /* 2% of the viewport width */
+            cursor: pointer;
+            position: absolute;
+            left: 50%;
+            z-index: 1;
+            transform: translateX(-50%);
+              background: none;
+              border: none;
+        }
+
+   #startButton {
+    top: 40%;
+    background-image: url('rocket.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+
+        #exitButton {
+
+    top: 65%;
+    background-image: url('planet-conquest.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+
+
+        }
+
+          button:active {
+        animation: shake 0.5s ease infinite; /* Adjust the duration and easing as needed */
+    }
+  body.transitioning {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+      #messageDiv {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 22, 54, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 80%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            color: white; /* Text color set to white */
+        }
+
+    </style>
+</head>
+<body>
+
+<script>
+
+        const canvas = document.createElement('canvas');
+        document.body.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+
+        const backgroundFrameCount = 45;
+        const backgroundBaseUrl = "https://raw.githubusercontent.com/Benedict0530/RocketGame-Assets/main/background%20";
+        const preloadedBackgroundFrames = [];
+
+        function preloadBackgroundFrames() {
+            for (let i = 1; i <= backgroundFrameCount; i++) {
+                const img = new Image();
+                img.src = `${backgroundBaseUrl}(${i}).png`;
+                preloadedBackgroundFrames.push(img);
+            }
+        }
+
+        function drawFrame(frameIndex) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(preloadedBackgroundFrames[frameIndex], 0, 0, canvas.width, canvas.height);
+        }
+
+        function animate() {
+            const frameIndex = Math.floor((Date.now() / 100) % backgroundFrameCount);
+            drawFrame(frameIndex);
+            requestAnimationFrame(animate);
+        }
+
+        function handleResize() {
+            // Adjust canvas size on window resize
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        // Set canvas size to match the viewport dimensions
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+        preloadBackgroundFrames();
+        animate();
+    </script>
+
+<img id="backgroundImage" src="background.png" alt="Background Image">
+
+<img id="rocketImage" src="nav.png" alt="Rocket Image">
+
+<button id="startButton" onclick="startGame()"></button>
+<button id="exitButton" onclick="exitGame()"></button>
+<div id="messageDiv">
+    <p>Embark on a thrilling cosmic adventure in Rocket Rift! Navigate your rocket through the vast unknown space as an enigmatic spacecraft launches missiles at you. Skillfully dodge the incoming threats to earn points and prove your intergalactic agility. How long can you survive the relentless missile assault and climb the leaderboard in this fast-paced space dodging challenge?</p>
+</div>
+<script>
+
+
+function startGame() {
+    // Add a class to the body to trigger the fade-out animation
+    document.body.classList.add('transitioning');
+
+    // Delay the redirection to ensure the animation starts
+    setTimeout(function () {
+        // Redirect to index.html after the animation duration (0.5s in this case)
+        window.location.href = 'index.html';
+    }, 500); // Adjust the delay as needed based on the animation duration
+}
+
+     function exitGame() {
+        // Show the message div when the exit button is touched
+        document.getElementById('messageDiv').style.display = 'block';
+
+        // Add a touchstart event listener to the document to hide the message div
+        setTimeout(function() {
+            document.addEventListener('touchstart', hideMessage);
+        }, 0);
+    }
+
+    function hideMessage(event) {
+        // Check if the touched element is outside the message div
+        const messageDiv = document.getElementById('messageDiv');
+        if (event.target !== messageDiv && !messageDiv.contains(event.target)) {
+            // Hide the message div
+            messageDiv.style.display = 'none';
+
+            // Remove the touchstart event listener from the document
+            document.removeEventListener('touchstart', hideMessage);
+        }
+    }
+    </script>
+
+</body>
+</html>
