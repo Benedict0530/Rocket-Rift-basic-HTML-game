@@ -513,7 +513,7 @@ checkImageLoading();
      if (eventName == null) {
          return;
      } else {
-         window.jsBridge.postMessage(eventName, JSON.stringify(eventData)); // Pass eventData as a JSON string
+        // window.jsBridge.postMessage(eventName, JSON.stringify(eventData)); // Pass eventData as a JSON string
          console.log('Event Tracked: ' + eventName);
      }
  }
